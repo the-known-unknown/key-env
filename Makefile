@@ -2,7 +2,7 @@ BINARY  := key-env
 SRC     := ./cmd/keyenv
 GOFLAGS ?=
 
-.PHONY: test build integration-test clean release
+.PHONY: test build integration-test integration-test-py clean release
 
 test:
 	go test ./...
@@ -22,6 +22,20 @@ integration-test: build
 		echo "integration-test: PASS"; \
 	else \
 		echo "integration-test: FAIL (expected '$$expected', got '$$actual')"; \
+		exit 1; \
+	fi
+
+integration-test-py: clean build
+	@expected="Jcg5TfdI9X0zHaU03Qx9bGb0rphYh0xIebtpFPTcRT"; \
+	actual=$$(./$(BINARY) run \
+		--env test/.env.sample \
+		--secrets test/keepass-sample-db.kdbx \
+		--password '4jFU%i*+Q2qdpFgoHJGK' \
+		-- sh -c 'echo $$TEST_CLIENT_SECRET'); \
+	if [ "$$actual" = "$$expected" ]; then \
+		echo "integration-test-py: PASS"; \
+	else \
+		echo "integration-test-py: FAIL (expected '$$expected', got '$$actual')"; \
 		exit 1; \
 	fi
 

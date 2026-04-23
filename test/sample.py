@@ -1,10 +1,11 @@
 import os
 import time
 
-print("\nEnv vars:")
+print("--------------------------------")
+print("\nStarting Python sample...")
+print("Env vars:")
 print("TEST_CLIENT_SECRET:", os.environ.get("TEST_CLIENT_SECRET", ""))
 print("TEST_CLIENT_NAME:", os.environ.get("TEST_CLIENT_NAME", ""))
-print("--------------------------------")
 
 print("\nDoing some work...")
 bar_length = 10

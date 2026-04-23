@@ -2,6 +2,7 @@ package secrets
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/asimmittal/key-env/internal/envfile"
@@ -17,10 +18,11 @@ type LoadedVar struct {
 
 type Loader struct {
 	providers map[string]vault.Provider
+	verbose   bool
 }
 
-func NewLoader(providers map[string]vault.Provider) *Loader {
-	return &Loader{providers: providers}
+func NewLoader(providers map[string]vault.Provider, verbose bool) *Loader {
+	return &Loader{providers: providers, verbose: verbose}
 }
 
 func (l *Loader) Load(parsed []envfile.ParsedVar) ([]LoadedVar, error) {
@@ -44,6 +46,9 @@ func (l *Loader) Load(parsed []envfile.ParsedVar) ([]LoadedVar, error) {
 		value, err := provider.Resolve(item.Path)
 		if err != nil {
 			return nil, fmt.Errorf("failed to resolve %s (%s://%s): %w", item.Var, item.Type, item.Path, err)
+		}
+		if l.verbose {
+			fmt.Fprintf(os.Stderr, "[key-env | %s]: ✔ %s\n", item.Type, item.Var)
 		}
 		out = append(out, LoadedVar{
 			Var:   item.Var,

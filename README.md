@@ -40,7 +40,7 @@ Your secrets never leave the password manager until the moment they're needed, a
 ## Dependencies
 
 - **Go 1.22+** — required to build from source
-- **KeePassXC** — the `keepassxc-cli` binary must be available on your `PATH` (install via `brew install keepassxc` on macOS)
+- **KeePassXC 2.7+** — the `keepassxc-cli` binary must be available on your `PATH` (install via `brew install keepassxc` on macOS). Tested with `2.7.11`.
 
 ## Usage
 

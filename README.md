@@ -1,8 +1,5 @@
 # key-env
 
-[![CI](https://github.com/the-known-unknown/key-env/actions/workflows/ci.yml/badge.svg)](https://github.com/the-known-unknown/key-env/actions/workflows/ci.yml)
-[![Release](https://github.com/the-known-unknown/key-env/actions/workflows/release.yml/badge.svg)](https://github.com/the-known-unknown/key-env/releases)
-
 ## The problem
 
 `.env` files are everywhere in local development. They store API keys, database credentials, OAuth secrets, and other sensitive values that your application needs to run. Typically these secrets sit in plaintext, committed to repos or shared over Slack.
@@ -202,6 +199,8 @@ Doing some work...
 ✔ Done!
 ```
 
+---
+
 ## Releasing
 
 Releases are automated via [GoReleaser](https://goreleaser.com/) and GitHub Actions. To cut a new release:
@@ -221,11 +220,15 @@ All releases are listed on the [releases page](https://github.com/the-known-unkn
 
 Commit messages are used to generate release notes. Use conventional prefixes for cleaner changelogs:
 
-| Prefix   | Category      |
-|----------|---------------|
-| `feat:`  | Features      |
-| `fix:`   | Bug fixes     |
-| `docs:`  | Documentation |
+
+| Prefix  | Category      |
+| ------- | ------------- |
+| `feat:` | Features      |
+| `fix:`  | Bug fixes     |
+| `docs:` | Documentation |
+
+
+---
 
 ## Security notes
 
@@ -233,3 +236,9 @@ Commit messages are used to generate release notes. Use conventional prefixes fo
 - Your `.env` file still reveals metadata — variable names and vault paths — even though the actual secret values are encrypted. Be mindful when sharing or committing it.
 - The decrypted secrets exist in the child process's environment for the duration of its execution. They are not written to disk.
 
+---
+
+## CI & Releases
+
+[CI](https://github.com/the-known-unknown/key-env/actions/workflows/ci.yml)
+[Release](https://github.com/the-known-unknown/key-env/releases)

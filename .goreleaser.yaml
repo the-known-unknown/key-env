@@ -1,0 +1,38 @@
+project_name: key-env
+
+before:
+  hooks:
+    - go mod tidy
+    - go test ./...
+
+builds:
+  - id: key-env
+    main: ./cmd/keyenv
+    binary: key-env
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - id: default
+    formats: ["tar.gz"]
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+
+checksum:
+  name_template: "checksums.txt"
+
+brews:
+  - name: key-env
+    homepage: "https://github.com/asimmittal/key-env"
+    description: "Load env vars from files and hydrate secret references from local vault CLIs"
+    repository:
+      owner: asimmittal
+      name: homebrew-tap
+    install: |
+      bin.install "key-env"
+    test: |
+      system "#{bin}/key-env"

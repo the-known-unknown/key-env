@@ -49,15 +49,17 @@ EXPORT_DIR := $(HOME)/.key-env-test
 
 # Clean build, then bundle the binary + test fixtures into ~/.key-env-test
 # so you can test key-env outside this repo. Includes a ready-to-run run.sh.
-export-test: clean build
+export-test:
+	@rm -f $(BINARY)
+	@go test ./... >/dev/null 2>&1
+	@go build $(GOFLAGS) -o $(BINARY) $(SRC)
 	@rm -rf $(EXPORT_DIR)
 	@mkdir -p $(EXPORT_DIR)
 	@cp -a test/. $(EXPORT_DIR)/
 	@cp $(BINARY) $(EXPORT_DIR)/
 	@printf '#!/bin/sh\ncd "$$( dirname "$$0" )"\n./key-env run \\\n    --env .env.sample \\\n    --secrets keepass-sample-db.kdbx \\\n    --password '\''4jFU%%i*+Q2qdpFgoHJGK'\'' \\\n    --verbose \\\n    -- node sample.js\n' > $(EXPORT_DIR)/run.sh
 	@chmod +x $(EXPORT_DIR)/run.sh
-	@echo "Exported to $(EXPORT_DIR):"
-	@ls -1 $(EXPORT_DIR)
+	@echo "Exported to $(EXPORT_DIR)"
 
 # Remove the compiled binary
 clean:

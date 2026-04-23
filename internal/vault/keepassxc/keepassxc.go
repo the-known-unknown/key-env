@@ -20,6 +20,8 @@ func New(secretsPath, password string) *Provider {
 	}
 }
 
+const cliName = "keepassxc-cli"
+
 func (p *Provider) Resolve(path string) (string, error) {
 	if strings.TrimSpace(path) == "" {
 		return "", errors.New("empty KeepassXC path")
@@ -32,7 +34,11 @@ func (p *Provider) Resolve(path string) (string, error) {
 		return "", errors.New("missing KeepassXC password; pass --password or use a secure password source")
 	}
 
-	cmd := exec.Command("keepassxc-cli", "show", p.secretsPath, secretPath, "-q", "-s", "-a", credential)
+	if _, err := exec.LookPath(cliName); err != nil {
+		return "", fmt.Errorf("%s is not installed.\n\n  Install it with:  brew install keepassxc\n\n  For other platforms, see: https://keepassxc.org/download", cliName)
+	}
+
+	cmd := exec.Command(cliName, "show", p.secretsPath, secretPath, "-q", "-s", "-a", credential)
 	cmd.Stdin = strings.NewReader(p.password + "\n")
 
 	var stdout bytes.Buffer
@@ -45,7 +51,7 @@ func (p *Provider) Resolve(path string) (string, error) {
 		if msg == "" {
 			msg = err.Error()
 		}
-		return "", fmt.Errorf("keepassxc-cli failed: %s", msg)
+		return "", fmt.Errorf("%s failed: %s", cliName, msg)
 	}
 
 	value := strings.TrimSpace(stdout.String())

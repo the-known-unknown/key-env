@@ -133,6 +133,52 @@ $ ./key-env run \
 Jcg5TfdI9X0zHaU03Qx9bGb0rphYh0xIebtpFPTcRT
 ```
 
+### Running sample scripts
+
+The `test/` directory also includes sample Python and Node.js scripts that print the resolved secrets and show a progress bar:
+
+**Python:**
+
+```sh
+$ ./key-env run \
+    --env test/.env.sample \
+    --secrets test/keepass-sample-db.kdbx \
+    --password '4jFU%i*+Q2qdpFgoHJGK' \
+    -- python3 test/sample.py
+```
+
+```
+Env vars:
+TEST_CLIENT_SECRET: Jcg5TfdI9X0zHaU03Qx9bGb0rphYh0xIebtpFPTcRT
+TEST_CLIENT_NAME: test
+--------------------------------
+
+Doing some work...
+[██████████] 100%
+✔ Done!
+```
+
+**Node.js:**
+
+```sh
+$ ./key-env run \
+    --env test/.env.sample \
+    --secrets test/keepass-sample-db.kdbx \
+    --password '4jFU%i*+Q2qdpFgoHJGK' \
+    -- node test/sample.js
+```
+
+```
+Env vars:
+TEST_CLIENT_SECRET: Jcg5TfdI9X0zHaU03Qx9bGb0rphYh0xIebtpFPTcRT
+TEST_CLIENT_NAME: test
+--------------------------------
+
+Doing some work...
+[██████████] 100%
+✔ Done!
+```
+
 ## Security notes
 
 - The `--password` flag can expose your vault password in shell history and process listings. In production workflows, prefer passing it via stdin or a secure file.

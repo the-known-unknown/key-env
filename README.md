@@ -39,12 +39,6 @@ Your secrets never leave the password manager until the moment they're needed, a
 
 ## Install
 
-**Via Homebrew (macOS):**
-
-```sh
-brew install the-known-unknown/tap/key-env
-```
-
 **From source:**
 
 ```sh

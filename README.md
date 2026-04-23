@@ -30,10 +30,12 @@ Your secrets never leave the password manager until the moment they're needed, a
 
 ### Supported providers
 
-| Prefix   | Provider              | Status      |
-|----------|-----------------------|-------------|
-| `kp://`  | KeePassXC             | Implemented |
-| `op://`  | 1Password CLI         | Planned     |
+
+| Prefix  | Provider      | Status      |
+| ------- | ------------- | ----------- |
+| `kp://` | KeePassXC     | Implemented |
+| `op://` | 1Password CLI | Planned     |
+
 
 ## Dependencies
 
@@ -85,12 +87,14 @@ For example, to run `npm test` with secrets loaded:
   -- npm test
 ```
 
-| Flag         | Required | Description                                  |
-|--------------|----------|----------------------------------------------|
-| `--env`      | Yes      | Path to your `.env` file                     |
-| `--secrets`  | Yes      | Path to your `.kdbx` KeePassXC database      |
-| `--password` | Yes      | Password to unlock the KeePassXC database    |
-| `--`         | Yes      | Separator before the child command            |
+
+| Flag         | Required | Description                               |
+| ------------ | -------- | ----------------------------------------- |
+| `--env`      | Yes      | Path to your `.env` file                  |
+| `--secrets`  | Yes      | Path to your `.kdbx` KeePassXC database   |
+| `--password` | Yes      | Password to unlock the KeePassXC database |
+| `--`         | Yes      | Separator before the child command        |
+
 
 ## Development
 
@@ -124,6 +128,8 @@ $ ./key-env run \
     --secrets test/keepass-sample-db.kdbx \
     --password '4jFU%i*+Q2qdpFgoHJGK' \
     -- sh -c 'echo $TEST_CLIENT_SECRET'
+
+>> Output:
 Jcg5TfdI9X0zHaU03Qx9bGb0rphYh0xIebtpFPTcRT
 ```
 
@@ -132,3 +138,4 @@ Jcg5TfdI9X0zHaU03Qx9bGb0rphYh0xIebtpFPTcRT
 - The `--password` flag can expose your vault password in shell history and process listings. In production workflows, prefer passing it via stdin or a secure file.
 - Your `.env` file still reveals metadata — variable names and vault paths — even though the actual secret values are encrypted. Be mindful when sharing or committing it.
 - The decrypted secrets exist in the child process's environment for the duration of its execution. They are not written to disk.
+

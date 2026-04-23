@@ -11,8 +11,11 @@ builds:
     binary: key-env
     env:
       - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X main.version={{.Version}}
     goos:
       - darwin
+      - linux
     goarch:
       - amd64
       - arm64
@@ -25,14 +28,32 @@ archives:
 checksum:
   name_template: "checksums.txt"
 
+changelog:
+  sort: asc
+  groups:
+    - title: Features
+      regexp: '^.*?feat(\(.+\))?\!?:.+$'
+      order: 0
+    - title: Bug fixes
+      regexp: '^.*?fix(\(.+\))?\!?:.+$'
+      order: 1
+    - title: Documentation
+      regexp: '^.*?docs(\(.+\))?\!?:.+$'
+      order: 2
+    - title: Others
+      order: 999
+
+release:
+  make_latest: true
+
 brews:
   - name: key-env
-    homepage: "https://github.com/asimmittal/key-env"
+    homepage: "https://github.com/the-known-unknown/key-env"
     description: "Load env vars from files and hydrate secret references from local vault CLIs"
     repository:
-      owner: asimmittal
+      owner: the-known-unknown
       name: homebrew-tap
     install: |
       bin.install "key-env"
     test: |
-      system "#{bin}/key-env"
+      system "#{bin}/key-env", "--version"

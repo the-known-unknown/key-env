@@ -1,5 +1,8 @@
 # key-env
 
+[![CI](https://github.com/the-known-unknown/key-env/actions/workflows/ci.yml/badge.svg)](https://github.com/the-known-unknown/key-env/actions/workflows/ci.yml)
+[![Release](https://github.com/the-known-unknown/key-env/actions/workflows/release.yml/badge.svg)](https://github.com/the-known-unknown/key-env/releases)
+
 ## The problem
 
 `.env` files are everywhere in local development. They store API keys, database credentials, OAuth secrets, and other sensitive values that your application needs to run. Typically these secrets sit in plaintext, committed to repos or shared over Slack.
@@ -36,6 +39,26 @@ Your secrets never leave the password manager until the moment they're needed, a
 | `kp://` | KeePassXC     | Implemented |
 | `op://` | 1Password CLI | Planned     |
 
+
+## Install
+
+**Via Homebrew (macOS):**
+
+```sh
+brew install the-known-unknown/tap/key-env
+```
+
+**From source:**
+
+```sh
+git clone https://github.com/the-known-unknown/key-env.git
+cd key-env
+make build
+```
+
+**From GitHub Releases:**
+
+Download the latest binary for your platform from the [releases page](https://github.com/the-known-unknown/key-env/releases).
 
 ## Dependencies
 
@@ -178,6 +201,31 @@ Doing some work...
 [██████████] 100%
 ✔ Done!
 ```
+
+## Releasing
+
+Releases are automated via [GoReleaser](https://goreleaser.com/) and GitHub Actions. To cut a new release:
+
+```sh
+make release VERSION=0.2.0
+```
+
+This tags the commit and pushes the tag. GitHub Actions then:
+
+1. Runs tests
+2. Builds binaries for macOS (amd64 + arm64) and Linux (amd64 + arm64)
+3. Creates a GitHub Release with downloadable archives
+4. Updates the Homebrew tap formula
+
+All releases are listed on the [releases page](https://github.com/the-known-unknown/key-env/releases).
+
+Commit messages are used to generate release notes. Use conventional prefixes for cleaner changelogs:
+
+| Prefix   | Category      |
+|----------|---------------|
+| `feat:`  | Features      |
+| `fix:`   | Bug fixes     |
+| `docs:`  | Documentation |
 
 ## Security notes
 

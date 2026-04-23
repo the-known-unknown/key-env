@@ -23,7 +23,7 @@ type Config struct {
 
 func Run(args []string) error {
 	if len(args) == 0 || args[0] != "run" {
-		return errors.New("usage: key-env run --env <file> --secrets <kdbx> [--password <value>] -- <child command>")
+		return errors.New("usage: key-env run --env <file> --secrets <kdbx> --password <value> -- <child command>")
 	}
 
 	cfg, err := parseRunArgs(args[1:])

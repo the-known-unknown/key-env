@@ -20,6 +20,7 @@ Flags:
   --env <file>        Path to .env file
   --secrets <kdbx>    Path to KeePassXC .kdbx database
   --password <value>  Password to unlock the database
+  --verbose           Print detailed logging and stats
   --version           Print version and exit
   --help              Show this help message
 

@@ -113,7 +113,33 @@ For example, to run `npm test` with secrets loaded:
 | `--env`      | Yes      | Path to your `.env` file                  |
 | `--secrets`  | Yes      | Path to your `.kdbx` KeePassXC database   |
 | `--password` | Yes      | Password to unlock the KeePassXC database |
+| `--verbose`  | No       | Print per-variable logs and summary stats |
 | `--`         | Yes      | Separator before the child command        |
+
+### Verbose mode
+
+Pass `--verbose` to see which variables are decrypted and a summary of what was loaded:
+
+```sh
+$ ./key-env run \
+    --verbose \
+    --env test/.env.sample \
+    --secrets test/keepass-sample-db.kdbx \
+    --password '4jFU%i*+Q2qdpFgoHJGK' \
+    -- sh -c 'echo $TEST_CLIENT_SECRET'
+```
+
+```
+[key-env | kp]: ✔ TEST_CLIENT_SECRET
+[key-env | kp]: ✔ TEST_CLIENT_NAME
+
+Loaded 2 env vars (2 decrypted)
+  kp:// 100.0%
+  op://   0.0%
+
+--- key-env complete ---
+Jcg5TfdI9X0zHaU03Qx9bGb0rphYh0xIebtpFPTcRT
+```
 
 
 ## Development

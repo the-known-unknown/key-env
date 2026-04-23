@@ -23,7 +23,7 @@ func (f fakeProvider) Resolve(path string) (string, error) {
 func TestLoaderLoadSuccess(t *testing.T) {
 	loader := NewLoader(map[string]vault.Provider{
 		"kp": fakeProvider{value: "value"},
-	})
+	}, false)
 	parsed := []envfile.ParsedVar{
 		{Var: "DB_NAME", Type: envfile.TypePlain, Path: "userdb"},
 		{Var: "SECURE_SECRET_VAR", Type: envfile.TypeKP, Path: "path/to/secret/Password"},
@@ -44,7 +44,7 @@ func TestLoaderLoadSuccess(t *testing.T) {
 func TestLoaderLoadProviderError(t *testing.T) {
 	loader := NewLoader(map[string]vault.Provider{
 		"kp": fakeProvider{err: errors.New("missing path")},
-	})
+	}, false)
 	parsed := []envfile.ParsedVar{
 		{Var: "SECURE_SECRET_VAR", Type: envfile.TypeKP, Path: "path/to/secret/Password"},
 	}

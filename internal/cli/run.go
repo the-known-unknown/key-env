@@ -18,6 +18,7 @@ type Config struct {
 	EnvPath     string
 	SecretsPath string
 	Password    string
+	Verbose     bool
 	Child       []string
 }
 
@@ -40,10 +41,14 @@ func Run(args []string) error {
 		"kp": keepassxc.New(cfg.SecretsPath, cfg.Password),
 		"op": onepassword.New(),
 	}
-	loader := secrets.NewLoader(providers)
+	loader := secrets.NewLoader(providers, cfg.Verbose)
 	loaded, err := loader.Load(parsed)
 	if err != nil {
 		return err
+	}
+
+	if cfg.Verbose {
+		printSummary(loaded)
 	}
 
 	finalEnv := secrets.MergeWithCurrentEnv(loaded, os.Environ())
@@ -68,6 +73,7 @@ func parseRunArgs(args []string) (Config, error) {
 	fs.StringVar(&cfg.EnvPath, "env", "", "path to env file")
 	fs.StringVar(&cfg.SecretsPath, "secrets", "", "path to KeepassXC .kdbx file")
 	fs.StringVar(&cfg.Password, "password", "", "vault password (prefer stdin/file in production)")
+	fs.BoolVar(&cfg.Verbose, "verbose", false, "print detailed logging")
 
 	if err := fs.Parse(args[:delim]); err != nil {
 		return Config{}, err
@@ -91,4 +97,33 @@ func parseRunArgs(args []string) (Config, error) {
 	}
 
 	return cfg, nil
+}
+
+func printSummary(loaded []secrets.LoadedVar) {
+	total := len(loaded)
+	decrypted := 0
+	kpCount := 0
+	opCount := 0
+	for _, v := range loaded {
+		switch v.Type {
+		case envfile.TypeKP:
+			decrypted++
+			kpCount++
+		case envfile.TypeOP:
+			decrypted++
+			opCount++
+		}
+	}
+
+	pct := func(n int) float64 {
+		if decrypted == 0 {
+			return 0
+		}
+		return float64(n) / float64(decrypted) * 100
+	}
+
+	fmt.Fprintf(os.Stderr, "\nLoaded %d env vars (%d decrypted)\n", total, decrypted)
+	fmt.Fprintf(os.Stderr, "  kp:// %5.1f%%\n", pct(kpCount))
+	fmt.Fprintf(os.Stderr, "  op:// %5.1f%%\n", pct(opCount))
+	fmt.Fprintln(os.Stderr, "\n--- key-env complete ---")
 }

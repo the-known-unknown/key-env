@@ -3,6 +3,7 @@ console.log("\nStaring Node.js sample...");
 console.log("Env vars:");
 console.log("TEST_CLIENT_SECRET:", process.env.TEST_CLIENT_SECRET || "");
 console.log("TEST_CLIENT_NAME:", process.env.TEST_CLIENT_NAME || "");
+console.log("NODE_ENV:", process.env.NODE_ENV || "");
 
 console.log("\nDoing some work...");
 const barLength = 10;

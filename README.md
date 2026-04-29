@@ -223,6 +223,33 @@ Doing some work...
 ✔ Node.js sample done!
 ```
 
+**Handling child process failures:**
+
+If the child process exits with a non-zero code, `key-env` reports the failure and exits with code 1:
+
+```sh
+key-env run \
+  --env test/.env.sample \
+  --secrets test/keepass-sample-db.kdbx \
+  --password '4jFU%i*+Q2qdpFgoHJGK' \
+  -- node test/sample_fail.js
+```
+
+```
+Starting Node.js failure sample...
+Env vars:
+TEST_CLIENT_SECRET: Jcg5TfdI9X0zHaU03Qx9bGb0rphYh0xIebtpFPTcRT
+TEST_CLIENT_NAME: test
+
+Simulating work before failure...
+[█████] 100%
+
+✘ Something went wrong — exiting with code 1
+key-env: exit status 1
+```
+
+Secrets are still resolved and injected normally -- the failure happens in the child process, not in `key-env`. The `key-env: exit status N` line on stderr shows the child's original exit code.
+
 ---
 
 ## Install

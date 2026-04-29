@@ -33,4 +33,4 @@ jobs:
       - name: Install KeePassXC
         run: sudo apt-get update && sudo apt-get install -y keepassxc
 
-      - run: make integration-test
+      - run: make integrations

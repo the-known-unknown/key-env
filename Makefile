@@ -2,7 +2,7 @@ BINARY  := key-env
 SRC     := ./cmd/keyenv
 GOFLAGS ?=
 
-.PHONY: test build integration-test integration-test-py export-test clean release
+.PHONY: test build integration-test integration-test-fail integrations integration-test-py export-test clean release
 
 # Run all Go unit tests
 test:
@@ -28,6 +28,29 @@ integration-test: build
 		echo "integration-test: FAIL (expected '$$expected', got '$$actual')"; \
 		exit 1; \
 	fi
+
+# Verify that key-env surfaces child process failures correctly.
+# The child exits with code 42; key-env should exit non-zero and
+# its stderr should contain the original exit code.
+integration-test-fail: build
+	@command -v keepassxc-cli >/dev/null 2>&1 || (echo "error: keepassxc-cli not found on PATH" && exit 1)
+	@stderr=$$(./$(BINARY) run \
+		--env test/.env.sample \
+		--secrets test/keepass-sample-db.kdbx \
+		--password '4jFU%i*+Q2qdpFgoHJGK' \
+		-- sh -c 'echo $$TEST_CLIENT_SECRET; exit 42' 2>&1 1>/dev/null); \
+	rc=$$?; \
+	if [ "$$rc" -eq 0 ]; then \
+		echo "integration-test-fail: FAIL (expected non-zero exit, got 0)"; \
+		exit 1; \
+	fi; \
+	case "$$stderr" in \
+		*"exit status 42"*) echo "integration-test-fail: PASS (child exit 42 surfaced correctly)" ;; \
+		*) echo "integration-test-fail: FAIL (stderr missing 'exit status 42', got: $$stderr)"; exit 1 ;; \
+	esac
+
+# Run all integration tests
+integrations: integration-test integration-test-fail
 
 # Same as integration-test but does a clean build first.
 # Does not require keepassxc-cli (uses the Go-native KeePass reader).

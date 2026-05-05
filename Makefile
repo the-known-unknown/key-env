@@ -18,7 +18,7 @@ integration-test: build
 	@command -v keepassxc-cli >/dev/null 2>&1 || (echo "error: keepassxc-cli not found on PATH" && exit 1)
 	@expected="Jcg5TfdI9X0zHaU03Qx9bGb0rphYh0xIebtpFPTcRT"; \
 	actual=$$(./$(BINARY) run \
-		--env test/.env.sample \
+		--env test/.env.kp \
 		--secrets test/keepass-sample-db.kdbx \
 		--password '4jFU%i*+Q2qdpFgoHJGK' \
 		-- sh -c 'echo $$TEST_CLIENT_SECRET'); \
@@ -35,7 +35,7 @@ integration-test: build
 integration-test-fail: build
 	@command -v keepassxc-cli >/dev/null 2>&1 || (echo "error: keepassxc-cli not found on PATH" && exit 1)
 	@stderr=$$(./$(BINARY) run \
-		--env test/.env.sample \
+		--env test/.env.kp \
 		--secrets test/keepass-sample-db.kdbx \
 		--password '4jFU%i*+Q2qdpFgoHJGK' \
 		-- sh -c 'echo $$TEST_CLIENT_SECRET; exit 42' 2>&1 1>/dev/null); \
@@ -57,7 +57,7 @@ integrations: integration-test integration-test-fail
 integration-test-py: clean build
 	@expected="Jcg5TfdI9X0zHaU03Qx9bGb0rphYh0xIebtpFPTcRT"; \
 	actual=$$(./$(BINARY) run \
-		--env test/.env.sample \
+		--env test/.env.kp \
 		--secrets test/keepass-sample-db.kdbx \
 		--password '4jFU%i*+Q2qdpFgoHJGK' \
 		-- sh -c 'echo $$TEST_CLIENT_SECRET'); \
@@ -80,7 +80,7 @@ export-test:
 	@mkdir -p $(EXPORT_DIR)
 	@cp -a test/. $(EXPORT_DIR)/
 	@cp $(BINARY) $(EXPORT_DIR)/
-	@printf '#!/bin/sh\ncd "$$( dirname "$$0" )"\n./key-env run \\\n    --env .env.sample \\\n    --secrets keepass-sample-db.kdbx \\\n    --password '\''4jFU%%i*+Q2qdpFgoHJGK'\'' \\\n    --verbose \\\n    -- node sample.js\n' > $(EXPORT_DIR)/run.sh
+	@printf '#!/bin/sh\ncd "$$( dirname "$$0" )"\n./key-env run \\\n    --env .env.kp \\\n    --secrets keepass-sample-db.kdbx \\\n    --password '\''4jFU%%i*+Q2qdpFgoHJGK'\'' \\\n    --verbose \\\n    -- node sample.js\n' > $(EXPORT_DIR)/run.sh
 	@chmod +x $(EXPORT_DIR)/run.sh
 	@echo "Exported to $(EXPORT_DIR)"
 

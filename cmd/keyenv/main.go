@@ -17,15 +17,22 @@ Commands:
   run    Load env vars, resolve secrets, and run a child command
 
 Flags:
-  --env <file>        Path to .env file
-  --secrets <kdbx>    Path to KeePassXC .kdbx database
-  --password <value>  Password to unlock the database
+  --env <file>        Path to .env file (required)
+  --secrets <kdbx>    Path to KeePassXC .kdbx database (required if env contains kp:// refs)
+  --password <value>  Password to unlock the database (required if env contains kp:// refs)
   --verbose           Print detailed logging and stats
   --version           Print version and exit
   --help              Show this help message
 
-Example:
-  key-env run --env .env.dev --secrets ./secrets.kdbx --password 'pw' -- npm test`
+1Password (op://) references use the op CLI's existing authentication
+(desktop app integration, op signin session, or OP_SERVICE_ACCOUNT_TOKEN).
+
+Examples:
+  # KeePassXC only
+  key-env run --env .env.dev --secrets ./secrets.kdbx --password 'pw' -- npm test
+
+  # 1Password only (no --secrets/--password needed)
+  key-env run --env .env.dev -- npm test`
 
 func main() {
 	if len(os.Args) > 1 {

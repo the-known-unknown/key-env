@@ -24,7 +24,7 @@ type Config struct {
 
 func Run(args []string) error {
 	if len(args) == 0 || args[0] != "run" {
-		return errors.New("usage: key-env run --env <file> --secrets <kdbx> --password <value> -- <child command>")
+		return errors.New("usage: key-env run --env <file> [--secrets <kdbx> --password <value>] -- <child command>")
 	}
 
 	cfg, err := parseRunArgs(args[1:])
@@ -35,6 +35,18 @@ func Run(args []string) error {
 	parsed, err := envfile.ParseFile(cfg.EnvPath)
 	if err != nil {
 		return err
+	}
+
+	if hasType(parsed, envfile.TypeKP) {
+		if cfg.SecretsPath == "" {
+			return errors.New("env file contains kp:// references; --secrets is required")
+		}
+		if cfg.Password == "" {
+			return errors.New("env file contains kp:// references; --password is required")
+		}
+		if _, err := os.Stat(cfg.SecretsPath); err != nil {
+			return fmt.Errorf("invalid --secrets path %q: %w", cfg.SecretsPath, err)
+		}
 	}
 
 	providers := map[string]vault.Provider{
@@ -83,20 +95,23 @@ func parseRunArgs(args []string) (Config, error) {
 	if cfg.EnvPath == "" {
 		return Config{}, errors.New("missing required input: --env")
 	}
-	if cfg.SecretsPath == "" {
-		return Config{}, errors.New("missing required input: --secrets")
-	}
 	if len(cfg.Child) == 0 {
 		return Config{}, errors.New("missing required child command after `--`")
 	}
 	if _, err := os.Stat(cfg.EnvPath); err != nil {
 		return Config{}, fmt.Errorf("invalid --env path %q: %w", cfg.EnvPath, err)
 	}
-	if _, err := os.Stat(cfg.SecretsPath); err != nil {
-		return Config{}, fmt.Errorf("invalid --secrets path %q: %w", cfg.SecretsPath, err)
-	}
 
 	return cfg, nil
+}
+
+func hasType(parsed []envfile.ParsedVar, t string) bool {
+	for _, item := range parsed {
+		if item.Type == t {
+			return true
+		}
+	}
+	return false
 }
 
 func printSummary(loaded []secrets.LoadedVar) {

@@ -35,14 +35,28 @@ Agentic coding tools make this worse. Copilot, Cursor, and Claude read and write
 
 ## How it works
 
+```mermaid
+flowchart LR
+    EnvFile[".env file"] --> Parser["envfile parser"]
+    Parser -->|"kp://"| KP["keepassxc provider"]
+    Parser -->|"op://"| OP["onepassword provider"]
+    Parser -->|"plain"| Plain["pass-through"]
+    KP -->|"shells out"| KPCli["keepassxc-cli show\n(uses --password)"]
+    OP -->|"shells out"| OPCli["op read\n(uses ambient auth)"]
+    KPCli --> Loader["secrets loader"]
+    OPCli --> Loader
+    Plain --> Loader
+    Loader --> Runner["child process"]
+```
+
 When you run your application through `key-env`, it:
 
-1. Reads your `.env` file and identifies secret references (e.g. `kp://...`)
-2. Resolves each reference by querying your local password manager
+1. Reads your `.env` file and identifies secret references (e.g. `kp://...`, `op://...`)
+2. Routes each reference to the right provider, which shells out to the corresponding password manager CLI
 3. Injects the decrypted values into the environment
 4. Launches your application with the fully hydrated environment
 
-Plain values are passed through as-is. You can mix secrets and non-secrets in the same `.env` file.
+Plain values are passed through as-is. You can mix `kp://`, `op://`, and plain values in the same `.env` file.
 
 ---
 
